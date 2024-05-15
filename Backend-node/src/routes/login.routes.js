@@ -4,7 +4,10 @@ import {
     ERR_USER_NOT_FOUND,
     ERR_EMAIL_ALREADY_EXISTS,
     login,
-    createUser
+    createUser,
+    addFailedLoginAttempt, 
+    ERR_USER_BLOCKED,
+    checkIfBlocked
  } from "../controllers/login.controller.js";
 import verifyToken from "../middleware/login.middleware.js";
 
@@ -14,17 +17,20 @@ export const ERR_INTERNAL_SERVER = "internal server error"
 export const ERR_UNAUTHORIZED = "usuario no autorizado"
 
 router.post('/login', async (req, res) =>{
+    const { email, password } = req.body;
     try{
-        const { email, password } = req.body;
+        await checkIfBlocked(email)
         const token = await login(email, password)
-
         res.status(200).json({ token });
     } catch (err) {
         if (err.message == ERR_PASSWORD_NOT_VALID) {
+            addFailedLoginAttempt(email)
             res.status(401).json({ msg: ERR_PASSWORD_NOT_VALID });
         } else if (err.message == ERR_USER_NOT_FOUND) {
             res.status(404).json({msg: ERR_USER_NOT_FOUND})
-        } else {
+        } else if(err.message == ERR_USER_BLOCKED){
+            res.status(401).json({msg: ERR_USER_BLOCKED})
+        }else{
             console.log(err)
             res.status(500).json({msg: ERR_INTERNAL_SERVER})
         }

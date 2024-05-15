@@ -8,6 +8,16 @@ const User = dbConnection.define('User',{
     password: {
         type: DataTypes.STRING
     },
+    blocked:{
+        type: DataTypes.BOOLEAN
+    },
+    failedLogins:{
+        type: DataTypes.NUMBER
+    },
+    lastFailedLogin:{
+        type: DataTypes.DATE
+    }
+
 }, { timestamps: false })
 
 export default User;

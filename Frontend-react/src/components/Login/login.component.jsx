@@ -1,28 +1,33 @@
 import './login.component.css'
 import React, {useState} from "react";
+
 export const Login = () => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
-    const handleBtn = (event) => {
+
+    const handleBtn = async(event) => {
         event.preventDefault();
        
-        const data = {
-            email: email,
-            password : password
+        try {
+            const data = {
+                email: email,
+                password : password
+            }
+    
+            const response = await fetch('http://localhost:9001/api/login',{
+                method: 'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify(data) 
+            })
+    
+            const resData = await response.json()
+            localStorage.setItem('jwt', resData.token)
+            localStorage.setItem('logedIn', true)
+        } catch(err) {
+            console.log(err)
         }
-
-        fetch('http://localhost:9001/api/login',{
-            method: 'POST',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify(data) 
-        })
-        .then(res => res.json())
-        .then(result => {console.log(result)})
-        .catch(error => {
-            console.log({ error })
-        })
     }
 
     return (
