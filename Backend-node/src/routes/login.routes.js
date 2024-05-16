@@ -24,7 +24,7 @@ router.post('/login', async (req, res) =>{
         res.status(200).json({ token });
     } catch (err) {
         if (err.message == ERR_PASSWORD_NOT_VALID) {
-            addFailedLoginAttempt(email)
+            await addFailedLoginAttempt(email)
             res.status(401).json({ msg: ERR_PASSWORD_NOT_VALID });
         } else if (err.message == ERR_USER_NOT_FOUND) {
             res.status(404).json({msg: ERR_USER_NOT_FOUND})
