@@ -7,7 +7,8 @@ import {
     createUser,
     addFailedLoginAttempt, 
     ERR_USER_BLOCKED,
-    checkIfBlocked
+    checkIfBlocked,
+    forgotPassword
  } from "../controllers/login.controller.js";
 import verifyToken from "../middleware/login.middleware.js";
 
@@ -68,6 +69,21 @@ router.get("/protected-route", verifyToken, (req, res) => {
         }
     }
 });
+
+router.post("/forgot-password", async (req, res) => {
+    const { email } = req.body;
+    try {
+      await forgotPassword(email);
+      res.status(200).json({ status: "Success" });
+    } catch (err) {
+      if (err.message === ERR_USER_NOT_FOUND) {
+        res.status(404).json({ msg: ERR_USER_NOT_FOUND });
+      } else {
+        console.error(err);
+        res.status(500).json({ msg: "Internal Server Error" });
+      }
+    }
+  });
 
 export default router;
 

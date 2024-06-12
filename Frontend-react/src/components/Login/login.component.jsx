@@ -1,5 +1,10 @@
 import './login.component.css'
 import React, {useState} from "react";
+import {
+    BrowserRouter as Router,
+    Link,
+    Navigate
+  } from "react-router-dom";
 
 export const Login = () => {
     const [password, setPassword] = useState('');
@@ -38,6 +43,7 @@ export const Login = () => {
             <div className="login-with">
                 <div className="button-log"></div>
             </div>
+            <Navigate to="ForgotPass">Forgot password</Navigate>
             <button onClick={handleBtn} className="button-confirm">
                 Let`s go
             </button>
