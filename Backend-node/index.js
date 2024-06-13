@@ -8,13 +8,13 @@ const app = express();
 
 app.use(cors({
     origin:["http://localhost:5173"],
-    methods: ['GET','POST']
+    methods: ['GET','POST', 'PUT']
 }));
 
 app.use(express.json());
 
 
-const port = process.env.PORT || 9001;
+const port = process.env.PORT || 9002;
 dotenv.config();
 app.use('/api', routes);
 

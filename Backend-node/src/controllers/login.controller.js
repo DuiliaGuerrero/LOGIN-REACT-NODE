@@ -1,7 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer"; // Import nodemailer
 import { differenceInMinutes } from 'date-fns';
 
 export const ERR_USER_NOT_FOUND = "usuario no encontrado";
@@ -83,37 +82,4 @@ export const addFailedLoginAttempt = async (email) => {
     } else {
         await User.update({ failedLogins, lastFailedLogin: currentDate }, { where: { email } });
     }
-};
-
-export const forgotPassword = async (email) => {
-    const user = await User.findOne({ where: { email } });
-
-    if (!user) {
-        throw new Error(ERR_USER_NOT_FOUND);
-    }
-
-    const token = jwt.sign({ id: user.id }, "auth_key_custom_secret", { expiresIn: "1d" });
-
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'youremail@gmail.com',
-            pass: 'yourpassword'
-        }
-    });
-
-    var mailOptions = {
-        from: 'youremail@gmail.com',
-        to: email,
-        subject: 'Reset your password',
-        text: `http://localhost:5173/reset-password/${user.id}/${token}` 
-    };
-
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            throw new Error(error); // Throw error to be caught in the route
-        }
-    });
-
-    return token;
 };

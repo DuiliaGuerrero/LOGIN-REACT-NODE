@@ -1,20 +1,24 @@
-import './forgotpass.component.css';
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export const ForgotPassword = () => {
-    const [email, setEmail] = useState('');
+export const ResetPass = () => {
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
+    const {id} = useParams();
 
     const handleBtn = async (event) => {
         event.preventDefault();
-       
+
+        const data = {
+            id:id,
+            password: password
+        };
+
         try {
-            const data = { email };
-            const response = await fetch('http://localhost:9002/api/forgot-password', {
-                method: 'POST',
+            const response = await fetch('http://localhost:9002/api/update-user', {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -28,7 +32,7 @@ export const ForgotPassword = () => {
                 return;
             }
 
-            setSuccess('Email sent successfully. Please check your inbox.');
+            setSuccess('Password reset successfully.');
             setError('');
             setTimeout(() => navigate('/login'), 3000);
         } catch (err) {
@@ -36,29 +40,22 @@ export const ForgotPassword = () => {
             setSuccess('');
             console.log(err);
         }
+        console.log(data)
     };
+
+    
 
     return (
         <form className="form" onSubmit={handleBtn}>
-            <div className="title">Forgot Password,<br/><span>Write your email to continue</span></div>
+            <div className="title">Reset Password</div>
+            <input onChange={(event) => { setPassword(event.target.value) }} type="password" placeholder="New Password" name="password" className="input" required />
             {error && <div className="error">{error}</div>}
             {success && <div className="success">{success}</div>}
-            <input 
-                onChange={(event) => setEmail(event.target.value)} 
-                type="email" 
-                placeholder="Email" 
-                name="email" 
-                className="input" 
-                required
-            />
-            <div className="login-with">
-                <div className="button-log"></div>
-            </div>
             <button type="submit" className="button-confirm">
-                Send Email
+                Reset Password
             </button>
         </form>
-    );
+    )
 }
 
-export default ForgotPassword;
+export default ResetPass;
